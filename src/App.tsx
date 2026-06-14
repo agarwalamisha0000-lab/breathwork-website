@@ -311,11 +311,11 @@ export default function App() {
                 <Sparkles className="w-3 h-3" /> Bespoke Indian Breathwork Consultancy
               </div>
               
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-charcoal-900 tracking-tight leading-tight">
+              <h1 id="hero-main-title" className="text-4xl md:text-5xl lg:text-6xl font-serif text-charcoal-900 tracking-tight leading-tight">
                 Transform Stays into <span className="italic text-gold-600 block sm:inline">Vedic Sanctuaries.</span>
               </h1>
               
-              <p className="text-base md:text-lg text-sage-600 leading-relaxed max-w-2xl">
+              <p id="hero-main-desc" className="text-base md:text-lg bg-[#ffffff] border-2 border-[#79b944] text-[#efab29] p-4.5 rounded-2xl leading-relaxed max-w-2xl shadow-sm">
                 We design bespoke, scientifically-anchored respiratory programs for luxury boutique hotels and wellness resorts with 15–100 rooms. Bypass generic wet-spa lists. Deliver unforgettable guest restoration with zero infrastructural friction, generating proven TripAdvisor satisfaction and high-margin occupancy yields.
               </p>
 
