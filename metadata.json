@@ -1,0 +1,6 @@
+{
+  "name": "PranaVayu Breathwork Partnerships",
+  "description": "A luxury wellness consultancy portal for boutique resorts & hotels to design high-ROI bespoke Vedic breathwork and pranayama programs.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
