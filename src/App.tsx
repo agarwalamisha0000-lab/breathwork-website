@@ -138,6 +138,7 @@ export default function App() {
 
   // Gallery dynamic states
   const [galleryImages, setGalleryImages] = useState(INITIAL_GALLERY_IMAGES);
+  const [isGalleryEditUnlocked, setIsGalleryEditUnlocked] = useState(false);
 
   // Contact Form Inputs
   const [fullName, setFullName] = useState("");
@@ -180,6 +181,13 @@ export default function App() {
     return () => clearInterval(interval);
   }, [isGenerating]);
 
+  // Synchronize Backoffice console presence with gallery portfolio edit credentials
+  useEffect(() => {
+    if (showAdminTab) {
+      setIsGalleryEditUnlocked(true);
+    }
+  }, [showAdminTab]);
+
   // Check if saved background image is present, otherwise load fallback
   useEffect(() => {
     fetch("/amisha_bg.jpg", { method: "HEAD" })
@@ -195,7 +203,20 @@ export default function App() {
       });
     
     fetchInquiries();
+    fetchGallery();
   }, []);
+
+  const fetchGallery = async () => {
+    try {
+      const res = await fetch("/api/gallery");
+      if (res.ok) {
+        const data = await res.json();
+        setGalleryImages(data);
+      }
+    } catch (e) {
+      console.error("Failed to load persistent gallery items:", e);
+    }
+  };
 
   const fetchInquiries = async () => {
     try {
@@ -249,24 +270,67 @@ export default function App() {
     }
   };
 
-  const handleCreateGalleryImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCreateGalleryImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files[0]) {
       const file = files[0];
-      const localUrl = URL.createObjectURL(file);
-      setGalleryImages(prev => [
-        {
-          url: localUrl,
-          caption: `Custom uploaded brand element: ${file.name}`,
-          tag: "Moment of Breath"
-        },
-        ...prev
-      ]);
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        try {
+          const base64String = reader.result as string;
+          // 1. Upload base64 to server to convert to file
+          const uploadRes = await fetch("/api/gallery/upload", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ image: base64String })
+          });
+          
+          if (uploadRes.ok) {
+            const uploadData = await uploadRes.json();
+            const serverUrl = uploadData.url;
+            
+            // Prompt the owner for caption and tag to make it super rich!
+            const captionInput = prompt("Enter caption for this image:", `Pranayama session at luxury boutique resort.`);
+            const tagInput = prompt("Enter category tag:", "Pranayama");
+            
+            const newImage = {
+              url: serverUrl,
+              caption: captionInput || "Breathwork Integration Session",
+              tag: tagInput || "Pranayama"
+            };
+            
+            const updatedGallery = [newImage, ...galleryImages];
+            setGalleryImages(updatedGallery);
+            
+            // 2. Persist updated list
+            await fetch("/api/gallery/save", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ gallery: updatedGallery })
+            });
+          }
+        } catch (error) {
+          console.error("Failed uploading photo to portfolio gallery:", error);
+        }
+      };
+      reader.readAsDataURL(file);
     }
   };
 
-  const handleRemoveGalleryImage = (indexToRemove: number) => {
-    setGalleryImages(prev => prev.filter((_, idx) => idx !== indexToRemove));
+  const handleRemoveGalleryImage = async (indexToRemove: number) => {
+    if (confirm("Are you sure you want to remove this image from the gallery?")) {
+      const updatedGallery = galleryImages.filter((_, idx) => idx !== indexToRemove);
+      setGalleryImages(updatedGallery);
+      try {
+        await fetch("/api/gallery/save", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ gallery: updatedGallery })
+        });
+      } catch (e) {
+        console.error("Failed to delete picture from backend:", e);
+      }
+    }
   };
 
   // Submit contact form to the real full-stack Express database!
@@ -860,17 +924,45 @@ export default function App() {
                 </p>
               </div>
 
-              {/* Dynamic Action Button to let Amisha expand her portfolio galleries! */}
+              {/* Dynamic Action Button based on Owner editorial lock */}
               <div className="relative group self-stretch sm:self-auto flex items-center">
-                <label className="w-full sm:w-auto px-5 py-3 border border-primary-purple/30 bg-[#120A20] hover:bg-[#120A20]/60 text-white rounded-xl text-xs font-mono tracking-widest uppercase transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md glow-purple group-hover:scale-[1.02]">
-                  <Plus className="w-4 h-4 text-bright-purple" /> Expand Photo Gallery
-                  <input 
-                    type="file" 
-                    accept="image/*" 
-                    className="hidden" 
-                    onChange={handleCreateGalleryImage} 
-                  />
-                </label>
+                {!isGalleryEditUnlocked ? (
+                  <button
+                    onClick={() => {
+                      const pass = prompt("Enter owner passcode or your administrator email to manage gallery:", "");
+                      if (pass === "omvayu" || pass === "vayu" || pass === "agarwalamisha0000@gmail.com") {
+                        setIsGalleryEditUnlocked(true);
+                      } else if (pass !== null) {
+                        alert("Access denied. Visitors have viewing access only.");
+                      }
+                    }}
+                    className="w-full sm:w-auto px-4 py-2.5 border border-white/10 bg-[#120A20] hover:bg-[#120A20]/60 text-gray-400 hover:text-white rounded-xl text-[10px] font-mono tracking-widest uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
+                  >
+                    <Lock className="w-3.5 h-3.5 text-gray-500" /> Owner Access
+                  </button>
+                ) : (
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full">
+                    <span className="text-[10px] font-mono text-emerald-400 uppercase text-center sm:text-right">Editorial Mode Active</span>
+                    <div className="flex gap-2">
+                      <label id="expand-gallery-btn" className="w-full sm:w-auto px-4 py-2.5 border border-primary-purple/30 bg-[#120A20] hover:bg-[#120A20]/60 text-white rounded-xl text-[10px] font-mono tracking-widest uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-md glow-purple hover:scale-[1.02]">
+                        <Plus className="w-3.5 h-3.5 text-bright-purple" /> Upload Photo
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          className="hidden" 
+                          onChange={handleCreateGalleryImage} 
+                        />
+                      </label>
+                      <button
+                        onClick={() => setIsGalleryEditUnlocked(false)}
+                        className="p-2 border border-white/10 bg-[#050309] text-gray-400 hover:text-rose-400 rounded-xl text-[10px] uppercase font-mono cursor-pointer"
+                        title="Lock Editorial Mode"
+                      >
+                        Lock
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -897,18 +989,20 @@ export default function App() {
                     {img.tag}
                   </span>
 
-                  {/* Remove Button */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleRemoveGalleryImage(idx);
-                    }}
-                    className="absolute top-4 right-4 z-30 p-2 bg-red-950/95 hover:bg-rose-900 border border-rose-500/40 hover:border-rose-400 rounded-full text-rose-200 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 hover:scale-110 cursor-pointer flex items-center justify-center shadow-md leading-none"
-                    title="Remove Photo"
-                    id={`remove-pic-btn-${idx}`}
-                  >
-                    <Trash2 className="w-3.5 h-3.5 text-rose-300" />
-                  </button>
+                  {/* Remove Button - Only visible in Editor mode */}
+                  {isGalleryEditUnlocked && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveGalleryImage(idx);
+                      }}
+                      className="absolute top-4 right-4 z-30 p-2 bg-red-950/95 hover:bg-rose-900 border border-rose-500/40 hover:border-rose-400 rounded-full text-rose-200 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 hover:scale-110 cursor-pointer flex items-center justify-center shadow-md leading-none"
+                      title="Remove Photo"
+                      id={`remove-pic-btn-${idx}`}
+                    >
+                      <Trash2 className="w-3.5 h-3.5 text-rose-300" />
+                    </button>
+                  )}
 
                   {/* Hover visual textual overlay details */}
                   <div className="absolute inset-x-0 bottom-0 z-20 translate-y-6 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 p-6 flex flex-col space-y-1 text-left">

@@ -303,6 +303,107 @@ app.post("/api/upload-hero", (req, res) => {
   }
 });
 
+// Default pre-seeded gallery images in case persistent file doesn't exist yet
+const DEFAULT_GALLERY_IMAGES = [
+  {
+    url: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=600&auto=format&fit=crop",
+    caption: "Deep Pranayama alignment at a luxury resort in Himalayas.",
+    tag: "Pranayama"
+  },
+  {
+    url: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=600&auto=format&fit=crop",
+    caption: "Sunset Breath Purification circles guiding guests at coastal retreat.",
+    tag: "Residency"
+  },
+  {
+    url: "https://images.unsplash.com/photo-1515377905703-c4788e51af15?q=80&w=600&auto=format&fit=crop",
+    caption: "Sound healing vibration therapy with premium bronze singing bowls.",
+    tag: "Chakras"
+  },
+  {
+    url: "https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?q=80&w=600&auto=format&fit=crop",
+    caption: "Absolute Stillness - morning Vedic breathing on a tranquil beach stage.",
+    tag: "Vedic Wisdom"
+  },
+  {
+    url: "https://images.unsplash.com/photo-1511295742364-92767fa62d9f?q=80&w=600&auto=format&fit=crop",
+    caption: "Restorative Yoga Nidra layouts crafted with pure linen bolsters.",
+    tag: "Sleep Better"
+  },
+  {
+    url: "https://images.unsplash.com/photo-1545205597-3d9d02c29597?q=80&w=600&auto=format&fit=crop",
+    caption: "Gentle alternate-nostril breathing (Nadi Shodhana) for stress release.",
+    tag: "Nervous System"
+  }
+];
+
+const GALLERY_FILE_PATH = path.join(process.cwd(), "gallery.json");
+
+// API: Get gallery images (either loaded from custom database/file or pre-seeded default)
+app.get("/api/gallery", (req, res) => {
+  try {
+    if (fs.existsSync(GALLERY_FILE_PATH)) {
+      const data = fs.readFileSync(GALLERY_FILE_PATH, "utf-8");
+      return res.json(JSON.parse(data));
+    }
+  } catch (error) {
+    console.error("Failed to read gallery registry file:", error);
+  }
+  return res.json(DEFAULT_GALLERY_IMAGES);
+});
+
+// API: Upload custom gallery photo (accepts base64, saves as local file, and returns URL)
+app.post("/api/gallery/upload", (req, res) => {
+  const { image } = req.body;
+  if (!image) {
+    return res.status(400).json({ error: "Missing image data for gallery upload" });
+  }
+
+  try {
+    const base64Data = image.replace(/^data:image\/\w+;base64,/, "");
+    const buffer = Buffer.from(base64Data, "base64");
+
+    const publicDir = path.join(process.cwd(), "public");
+    if (!fs.existsSync(publicDir)) {
+      fs.mkdirSync(publicDir, { recursive: true });
+    }
+
+    const uniqueFilename = `gallery_${Date.now()}_${Math.floor(Math.random() * 10000)}.jpg`;
+    const publicFilePath = path.join(publicDir, uniqueFilename);
+    fs.writeFileSync(publicFilePath, buffer);
+
+    // Copy to dist folder in case it is served directly from there in production
+    const distDir = path.join(process.cwd(), "dist");
+    if (fs.existsSync(distDir)) {
+      const distFilePath = path.join(distDir, uniqueFilename);
+      fs.writeFileSync(distFilePath, buffer);
+    }
+
+    console.log(`Successfully uploaded and stored gallery photo: /${uniqueFilename}`);
+    res.json({ success: true, url: `/${uniqueFilename}` });
+  } catch (error) {
+    console.error("Error storing custom gallery photo:", error);
+    res.status(500).json({ error: "Failed to store custom gallery photo" });
+  }
+});
+
+// API: Save updated gallery configuration array persistently
+app.post("/api/gallery/save", (req, res) => {
+  const { gallery } = req.body;
+  if (!gallery || !Array.isArray(gallery)) {
+    return res.status(400).json({ error: "Invalid gallery list payload" });
+  }
+
+  try {
+    fs.writeFileSync(GALLERY_FILE_PATH, JSON.stringify(gallery, null, 2), "utf-8");
+    console.log("Persistent gallery configuration saved successfully.");
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Error saving persistent gallery config:", error);
+    res.status(500).json({ error: "Failed to save persistent gallery config" });
+  }
+});
+
 // Vite server integrations
 async function initServer() {
   if (process.env.NODE_ENV !== "production") {
