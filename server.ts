@@ -1,6 +1,7 @@
 import express from "express";
 import path from "path";
 import dotenv from "dotenv";
+import fs from "fs";
 import { GoogleGenAI, Type } from "@google/genai";
 import { createServer as createViteServer } from "vite";
 import { HotelInfo, Inquiry, ProposalResult } from "./src/types.js";
@@ -10,8 +11,8 @@ dotenv.config();
 const app = express();
 const PORT = 3000;
 
-// Enable JSON bodies
-app.use(express.json());
+// Enable JSON bodies with increased size limit for base64 images
+app.use(express.json({ limit: "20mb" }));
 
 const apiKey = process.env.GEMINI_API_KEY;
 const ai = new GoogleGenAI({
@@ -108,7 +109,7 @@ function generateLocalProposal(info: HotelInfo): ProposalResult {
         priceAnnually: 380400,
         deliverables: [
           "Everything in Veda Standard",
-          "3-Day physical workshop residency by Acharya Pranav",
+          "3-Day physical workshop residency by Amisha Agarwal",
           "Interactive guest booklets with customized botanical pairing",
           "TripAdvisor and Guest Review Optimization Toolkit",
           "24/7 client GM consult pipeline"
@@ -148,8 +149,8 @@ Here are the specific hotel parameters provided by the GM:
 - Core Guest Demographic: ${targetDemographic}
 - Desired Wellness Theme / Frustration Focus: ${focusTheme || "Custom bespoke relaxation and dynamic prana"}
 
-The yoga / breathwork instructor proposing this is "Acharya Dev", a master Indian Breathwork Consultant representing "PranaVayu Wellness Solutions". 
-We offer bespoke premium integrations (not generic yoga classes, but high-end signature guest respiratory journeys).
+The yoga / breathwork instructor proposing this is "Amisha Agarwal", an expert Breathwork Instructor with 8 years of intensive pranayama practice, representing her personal brand "Amisha Agarwal". 
+We offer bespoke premium respiratory integrations (not generic classes, but high-end signature guest respiratory journeys).
 
 Please generate a professional, ROI-driven proposal in JSON matching our schema.
 Make sure the tone is ultra-luxurious, commercial, professional, respectful of traditional Vedic pranayama wisdom, but highly strategic for hoteliers wanting guest experience scores (TripAdvisor) and high yield.
@@ -167,7 +168,7 @@ Calculated Projections references:
       model: "gemini-3.5-flash",
       contents: prompt,
       config: {
-        systemInstruction: "You are a master Vedic breathwork teacher and upscale hospitality wellness consultant. You format highly polished professional business proposals for premium hoteliers seeking ROI and premium branding.",
+        systemInstruction: "You are a master Vedic breathwork teacher and upscale hospitality wellness program designer. You format highly polished professional business proposals for premium hoteliers seeking ROI and premium branding.",
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
@@ -267,6 +268,41 @@ app.post("/api/inquiries", async (req, res) => {
   res.status(201).json(newInquiry);
 });
 
+// API: Upload custom hero background / portrait image
+app.post("/api/upload-hero", (req, res) => {
+  const { image } = req.body;
+  if (!image) {
+    return res.status(400).json({ error: "Missing image data" });
+  }
+
+  try {
+    // Strip the Data URI scheme (e.g. "data:image/jpeg;base64,")
+    const base64Data = image.replace(/^data:image\/\w+;base64,/, "");
+    const buffer = Buffer.from(base64Data, "base64");
+
+    // Ensure /public directory exists
+    const publicDir = path.join(process.cwd(), "public");
+    if (!fs.existsSync(publicDir)) {
+      fs.mkdirSync(publicDir, { recursive: true });
+    }
+    const publicFilePath = path.join(publicDir, "amisha_bg.jpg");
+    fs.writeFileSync(publicFilePath, buffer);
+
+    // Also write to /dist directory if it exists, for instant production serve without rebuild
+    const distDir = path.join(process.cwd(), "dist");
+    if (fs.existsSync(distDir)) {
+      const distFilePath = path.join(distDir, "amisha_bg.jpg");
+      fs.writeFileSync(distFilePath, buffer);
+    }
+
+    console.log("Custom hero image saved successfully components with path /amisha_bg.jpg");
+    res.json({ success: true, url: "/amisha_bg.jpg" });
+  } catch (error) {
+    console.error("Error saving uploaded image:", error);
+    res.status(500).json({ error: "Failed to save uploaded image" });
+  }
+});
+
 // Vite server integrations
 async function initServer() {
   if (process.env.NODE_ENV !== "production") {
@@ -284,10 +320,10 @@ async function initServer() {
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`PranaVayu B2B Server running on port ${PORT}`);
+    console.log(`Amisha Agarwal B2B Server running on port ${PORT}`);
   });
 }
 
 initServer().catch((err) => {
-  console.error("Error booting PranaVayu fullstack server:", err);
+  console.error("Error booting Amisha Agarwal fullstack server:", err);
 });
