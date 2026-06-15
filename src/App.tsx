@@ -31,7 +31,8 @@ import {
   Compass,
   Sliders,
   DollarSign,
-  Trash2
+  Trash2,
+  Image
 } from 'lucide-react';
 import { HotelInfo, Inquiry, ProposalResult } from './types.js';
 import BreathingSimulator from './components/BreathingSimulator.tsx';
@@ -39,9 +40,35 @@ import RoiCalculator from './components/RoiCalculator.tsx';
 import LeadDashboard from './components/LeadDashboard.tsx';
 // @ts-expect-error
 import amishaBgDefault from './assets/images/amisha_bg_1781468937770.jpg';
-
 // Pre-seeded high-fidelity gallery images representing high-end wellness atmospheres
 const INITIAL_GALLERY_IMAGES = [
+  {
+    url: "your-photo-1-headstand.jpg",
+    caption: "Sirsasana alignment representing vertical oxygenation balance, captured outdoors amidst coastal palms.",
+    tag: "Pranayama",
+    isUserPlaceholder: true,
+    poseName: "Sirsasana (Headstand) Posture",
+    filename: "your-photo-1-headstand.jpg",
+    instruction: "Replace this block with your sirsasana headstand photo."
+  },
+  {
+    url: "your-photo-2-chakras.jpg",
+    caption: "Deep seated lotus meditation with active energetic chakra overlays, demonstrating prana flow alignment.",
+    tag: "Chakras",
+    isUserPlaceholder: true,
+    poseName: "Lotus Chakra Posture",
+    filename: "your-photo-2-chakras.jpg",
+    instruction: "Replace this block with your chakra meditation photo."
+  },
+  {
+    url: "your-photo-3-meditation.jpg",
+    caption: "Indoor meditative centering in Padmasana, representing absolute sensory quietness (Antar Mouna).",
+    tag: "Meditation",
+    isUserPlaceholder: true,
+    poseName: "Indoor Meditation Posture",
+    filename: "your-photo-3-meditation.jpg",
+    instruction: "Replace this block with your indoor meditation photo."
+  },
   {
     url: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=600&auto=format&fit=crop",
     caption: "Deep Pranayama alignment at a luxury resort in Himalayas.",
@@ -138,7 +165,19 @@ export default function App() {
 
   // Gallery dynamic states
   const [galleryImages, setGalleryImages] = useState(INITIAL_GALLERY_IMAGES);
-  const [isGalleryEditUnlocked, setIsGalleryEditUnlocked] = useState(false);
+  const [draggedOverIndex, setDraggedOverIndex] = useState<number | null>(null);
+
+  const handleGalleryDrop = (index: number, file: File) => {
+    const previewUrl = URL.createObjectURL(file);
+    setGalleryImages(prev => {
+      const copy = [...prev];
+      copy[index] = {
+        ...copy[index],
+        previewUrl: previewUrl
+      };
+      return copy;
+    });
+  };
 
   // Contact Form Inputs
   const [fullName, setFullName] = useState("");
@@ -181,13 +220,6 @@ export default function App() {
     return () => clearInterval(interval);
   }, [isGenerating]);
 
-  // Synchronize Backoffice console presence with gallery portfolio edit credentials
-  useEffect(() => {
-    if (showAdminTab) {
-      setIsGalleryEditUnlocked(true);
-    }
-  }, [showAdminTab]);
-
   // Check if saved background image is present, otherwise load fallback
   useEffect(() => {
     fetch("/amisha_bg.jpg", { method: "HEAD" })
@@ -203,20 +235,7 @@ export default function App() {
       });
     
     fetchInquiries();
-    fetchGallery();
   }, []);
-
-  const fetchGallery = async () => {
-    try {
-      const res = await fetch("/api/gallery");
-      if (res.ok) {
-        const data = await res.json();
-        setGalleryImages(data);
-      }
-    } catch (e) {
-      console.error("Failed to load persistent gallery items:", e);
-    }
-  };
 
   const fetchInquiries = async () => {
     try {
@@ -267,69 +286,6 @@ export default function App() {
     const files = e.dataTransfer.files;
     if (files && files[0] && files[0].type.startsWith("image/")) {
       processImageFile(files[0]);
-    }
-  };
-
-  const handleCreateGalleryImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files[0]) {
-      const file = files[0];
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        try {
-          const base64String = reader.result as string;
-          // 1. Upload base64 to server to convert to file
-          const uploadRes = await fetch("/api/gallery/upload", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ image: base64String })
-          });
-          
-          if (uploadRes.ok) {
-            const uploadData = await uploadRes.json();
-            const serverUrl = uploadData.url;
-            
-            // Prompt the owner for caption and tag to make it super rich!
-            const captionInput = prompt("Enter caption for this image:", `Pranayama session at luxury boutique resort.`);
-            const tagInput = prompt("Enter category tag:", "Pranayama");
-            
-            const newImage = {
-              url: serverUrl,
-              caption: captionInput || "Breathwork Integration Session",
-              tag: tagInput || "Pranayama"
-            };
-            
-            const updatedGallery = [newImage, ...galleryImages];
-            setGalleryImages(updatedGallery);
-            
-            // 2. Persist updated list
-            await fetch("/api/gallery/save", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ gallery: updatedGallery })
-            });
-          }
-        } catch (error) {
-          console.error("Failed uploading photo to portfolio gallery:", error);
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleRemoveGalleryImage = async (indexToRemove: number) => {
-    if (confirm("Are you sure you want to remove this image from the gallery?")) {
-      const updatedGallery = galleryImages.filter((_, idx) => idx !== indexToRemove);
-      setGalleryImages(updatedGallery);
-      try {
-        await fetch("/api/gallery/save", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ gallery: updatedGallery })
-        });
-      } catch (e) {
-        console.error("Failed to delete picture from backend:", e);
-      }
     }
   };
 
@@ -923,96 +879,181 @@ export default function App() {
                   A visual record of our global hotel residencies, group classes, and immersive workshops.
                 </p>
               </div>
-
-              {/* Dynamic Action Button based on Owner editorial lock */}
-              <div className="relative group self-stretch sm:self-auto flex items-center">
-                {!isGalleryEditUnlocked ? (
-                  <button
-                    onClick={() => {
-                      const pass = prompt("Enter owner passcode or your administrator email to manage gallery:", "");
-                      if (pass === "omvayu" || pass === "vayu" || pass === "agarwalamisha0000@gmail.com") {
-                        setIsGalleryEditUnlocked(true);
-                      } else if (pass !== null) {
-                        alert("Access denied. Visitors have viewing access only.");
-                      }
-                    }}
-                    className="w-full sm:w-auto px-4 py-2.5 border border-white/10 bg-[#120A20] hover:bg-[#120A20]/60 text-gray-400 hover:text-white rounded-xl text-[10px] font-mono tracking-widest uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
-                  >
-                    <Lock className="w-3.5 h-3.5 text-gray-500" /> Owner Access
-                  </button>
-                ) : (
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full">
-                    <span className="text-[10px] font-mono text-emerald-400 uppercase text-center sm:text-right">Editorial Mode Active</span>
-                    <div className="flex gap-2">
-                      <label id="expand-gallery-btn" className="w-full sm:w-auto px-4 py-2.5 border border-primary-purple/30 bg-[#120A20] hover:bg-[#120A20]/60 text-white rounded-xl text-[10px] font-mono tracking-widest uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-md glow-purple hover:scale-[1.02]">
-                        <Plus className="w-3.5 h-3.5 text-bright-purple" /> Upload Photo
-                        <input 
-                          type="file" 
-                          accept="image/*" 
-                          className="hidden" 
-                          onChange={handleCreateGalleryImage} 
-                        />
-                      </label>
-                      <button
-                        onClick={() => setIsGalleryEditUnlocked(false)}
-                        className="p-2 border border-white/10 bg-[#050309] text-gray-400 hover:text-rose-400 rounded-xl text-[10px] uppercase font-mono cursor-pointer"
-                        title="Lock Editorial Mode"
-                      >
-                        Lock
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
             </div>
 
             {/* Beautiful Mosaic / Masonry Gallery Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-              {galleryImages.map((img, idx) => (
-                <div 
-                  key={idx}
-                  className="group relative rounded-2xl overflow-hidden aspect-square border border-white/10 bg-[#120A20] transition-all hover:border-primary-purple duration-500 shadow-xl"
-                >
-                  {/* Photo background */}
-                  <img 
-                    src={img.url} 
-                    alt={img.caption} 
-                    referrerPolicy="no-referrer"
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  
-                  {/* Dark gradients on Hover */}
-                  <div className="absolute inset-0 bg-[#0A0A0A]/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-6 z-10" />
-
-                  {/* Absolute Badge */}
-                  <span className="absolute top-4 left-4 z-20 bg-primary-purple/20 text-bright-purple border border-primary-purple/40 font-mono text-[9px] px-2.5 py-0.5 rounded-full uppercase tracking-widest">
-                    {img.tag}
-                  </span>
-
-                  {/* Remove Button - Only visible in Editor mode */}
-                  {isGalleryEditUnlocked && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleRemoveGalleryImage(idx);
+              {galleryImages.map((img: any, idx) => {
+                if (img.isUserPlaceholder) {
+                  const isOver = draggedOverIndex === idx;
+                  return (
+                    <div 
+                      key={idx}
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        setDraggedOverIndex(idx);
                       }}
-                      className="absolute top-4 right-4 z-30 p-2 bg-red-950/95 hover:bg-rose-900 border border-rose-500/40 hover:border-rose-400 rounded-full text-rose-200 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 hover:scale-110 cursor-pointer flex items-center justify-center shadow-md leading-none"
-                      title="Remove Photo"
-                      id={`remove-pic-btn-${idx}`}
+                      onDragLeave={() => {
+                        setDraggedOverIndex(null);
+                      }}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        setDraggedOverIndex(null);
+                        const files = e.dataTransfer.files;
+                        if (files && files[0] && files[0].type.startsWith("image/")) {
+                          handleGalleryDrop(idx, files[0]);
+                        }
+                      }}
+                      onClick={() => {
+                        const input = document.getElementById(`gallery-file-input-${idx}`);
+                        if (input) {
+                          (input as HTMLInputElement).click();
+                        }
+                      }}
+                      className={`group relative rounded-2xl overflow-hidden aspect-square border transition-all duration-500 shadow-2xl flex flex-col justify-end p-5 cursor-pointer ${
+                        img.previewUrl 
+                          ? 'border-primary-purple bg-primary-purple/5 hover:border-bright-purple scale-[1.01] hover:scale-[1.02]' 
+                          : isOver 
+                            ? 'border-green-400 bg-purple-950/40 scale-[1.02] shadow-green-500/10' 
+                            : 'border-[#a855f7]/30 bg-[#120A20] hover:border-bright-purple hover:shadow-purple-500/10'
+                      }`}
                     >
-                      <Trash2 className="w-3.5 h-3.5 text-rose-300" />
-                    </button>
-                  )}
+                      <input 
+                        type="file" 
+                        id={`gallery-file-input-${idx}`}
+                        className="hidden" 
+                        accept="image/*"
+                        onChange={(e) => {
+                          const files = e.target.files;
+                          if (files && files[0]) {
+                            handleGalleryDrop(idx, files[0]);
+                          }
+                        }}
+                      />
 
-                  {/* Hover visual textual overlay details */}
-                  <div className="absolute inset-x-0 bottom-0 z-20 translate-y-6 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 p-6 flex flex-col space-y-1 text-left">
-                    <span className="text-[9px] font-mono text-[#C084FC] uppercase tracking-widest font-bold">Lineage Documentation</span>
-                    <p className="text-white text-xs leading-normal font-sans tracking-wide">
-                      {img.caption}
-                    </p>
-                  </div>
-                </div>
-              ))}
+                      {/* Standard HTML <img> tag pointing to the user's placeholder filename as requested */}
+                      {(img.previewUrl || img.url) && (
+                        <img 
+                          src={img.previewUrl || img.url} 
+                          alt={img.caption} 
+                          referrerPolicy="no-referrer"
+                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 z-10"
+                          style={{
+                            display: img.previewUrl ? 'block' : undefined
+                          }}
+                          onError={(e) => {
+                            // Gracefully hides the browser's default broken image icon before they replace the files
+                            if (!img.previewUrl) {
+                              e.currentTarget.style.display = 'none';
+                            }
+                          }}
+                        />
+                      )}
+
+                      {/* High-quality styled background placeholder that shows if the file is missing or not previewed */}
+                      {!img.previewUrl && (
+                        <div className="absolute inset-0 bg-[#0e061c] bg-gradient-to-b from-[#130926]/45 via-[#0d051a] to-[#080212] flex flex-col justify-between p-5 z-0 border border-white/5">
+                          {/* Nested dashed border frame representing the image container slot */}
+                          <div className={`absolute inset-2 border-2 border-dashed rounded-xl pointer-events-none z-0 transition-colors ${
+                            isOver ? 'border-green-400 bg-green-500/5' : 'border-[#a855f7]/20'
+                          }`} />
+
+                          {/* Top banner */}
+                          <div className="flex justify-between items-center z-10">
+                            <span className="text-[9px] font-mono tracking-widest text-[#C084FC] bg-[#7c3aed]/10 border border-[#7c3aed]/30 px-2.5 py-1 rounded-full uppercase">
+                              {img.tag}
+                            </span>
+                            <div className="flex items-center gap-1.5 bg-[#0a0412]/80 backdrop-blur-sm border border-white/5 py-0.5 px-2 rounded-full">
+                              <Image className={`w-3 h-3 text-[#C084FC] ${isOver ? 'text-green-400 animate-spin' : 'animate-pulse'}`} />
+                              <span className="text-[8px] font-mono text-gray-400 uppercase tracking-widest">
+                                {isOver ? 'Drop Image Here!' : 'Image Container'}
+                              </span>
+                              <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${isOver ? 'bg-green-400' : 'bg-yellow-500'}`} />
+                            </div>
+                          </div>
+
+                          {/* Middle icon illustration representing classical yoga lineage */}
+                          <div className="flex flex-col items-center justify-center py-2 text-center z-10">
+                            <div className="w-10 h-10 rounded-full bg-[#1b1031] border border-[#a855f7]/20 flex items-center justify-center text-[#C084FC] mb-2 group-hover:scale-110 transition-transform duration-300 shadow-inner">
+                              <Wind className="w-5 h-5 text-bright-purple animate-pulse" />
+                            </div>
+                            <p className="text-[8.5px] font-mono text-gray-500 uppercase tracking-widest leading-none">CORE SADHANA PRACTICE</p>
+                            <h4 className="text-white text-[11px] font-semibold tracking-wider uppercase mt-1 text-center">{img.poseName}</h4>
+                          </div>
+
+                          {/* Bottom user action block */}
+                          <div className="bg-[#050308]/95 border border-white/5 p-3 rounded-xl space-y-1 text-left z-10">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-1.5">
+                                <div className="w-1.5 h-1.5 rounded-full bg-purple-500" />
+                                <span className="text-[8px] font-mono font-bold tracking-widest text-bright-purple uppercase">DRAG & DROP IMAGE</span>
+                              </div>
+                              <span className="text-[8.5px] font-mono text-yellow-400 font-semibold select-all font-sans">"{img.url}"</span>
+                            </div>
+                            <p className="text-[9px] text-gray-400 leading-normal border-t border-white/5 pt-1">
+                              Drag-and-drop here or click to import. Store your final image as public/<span className="text-white font-mono font-bold select-all bg-[#120a20] px-1 py-0.5 rounded border border-white/5">{img.url}</span> later.
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Hover Text Overlays over the actual image (once the file is loaded!) */}
+                      {img.previewUrl && (
+                        <>
+                          <div className="absolute inset-0 bg-[#0A0A0A]/95 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-15 flex flex-col justify-end p-6" />
+                          <div className="absolute inset-x-0 bottom-0 z-20 translate-y-6 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 p-6 flex flex-col space-y-2 text-left pointer-events-none">
+                            <span className="text-[9px] font-mono text-[#C084FC] uppercase tracking-widest font-bold">Lineage Documentation</span>
+                            <h4 className="text-white text-sm font-display font-bold uppercase tracking-wider">{img.poseName}</h4>
+                            <p className="text-gray-300 text-xs leading-normal font-sans tracking-wide">
+                              {img.caption}
+                            </p>
+                            <div className="flex items-center justify-between border-t border-white/10 pt-2 mt-1">
+                              <span className="text-[9px] font-mono text-gray-500 uppercase">
+                                File: {img.url}
+                              </span>
+                              <span className="text-[8.5px] font-mono text-green-400 uppercase font-semibold">
+                                Live Preview Active
+                              </span>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  );
+                } else {
+                  // Normal unsplash residency images
+                  return (
+                    <div 
+                      key={idx}
+                      className="group relative rounded-2xl overflow-hidden aspect-square border border-white/10 bg-[#120A20] transition-all hover:border-primary-purple duration-500 shadow-xl"
+                    >
+                      {/* Photo background */}
+                      <img 
+                        src={img.url} 
+                        alt={img.caption} 
+                        referrerPolicy="no-referrer"
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      
+                      {/* Dark gradients on Hover */}
+                      <div className="absolute inset-0 bg-[#0A0A0A]/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-6 z-10" />
+
+                      {/* Absolute Badge */}
+                      <span className="absolute top-4 left-4 z-20 bg-primary-purple/20 text-bright-purple border border-primary-purple/40 font-mono text-[9px] px-2.5 py-0.5 rounded-full uppercase tracking-widest">
+                        {img.tag}
+                      </span>
+
+                      {/* Hover visual textual overlay details */}
+                      <div className="absolute inset-x-0 bottom-0 z-20 translate-y-6 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 p-6 flex flex-col space-y-1 text-left">
+                        <span className="text-[9px] font-mono text-[#C084FC] uppercase tracking-widest font-bold">Residency & Ambience</span>
+                        <p className="text-white text-xs leading-normal font-sans tracking-wide">
+                          {img.caption}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                }
+              })}
             </div>
 
           </div>

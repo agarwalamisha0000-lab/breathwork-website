@@ -72,7 +72,7 @@ export default function BreathingSimulator({ onBookCall }: BreathingSimulatorPro
 
     try {
       // Warm, ultra-calming consonant harmonics based on pure ratios (1:2:3:4 octave-fifth series)
-      const f0 = 136.10; // Earth OM tuning fundamental - deeply grounding and soothing
+      const f0 = 110.00; // Grounding fundamental (A2) - deeply soothing and relaxing
 
       // Fundamental deep resonance
       const osc1 = ctx.createOscillator();
@@ -92,7 +92,7 @@ export default function BreathingSimulator({ onBookCall }: BreathingSimulatorPro
       osc3.frequency.setValueAtTime(f0 * 3.0, now);
       osc3Ref.current = osc3;
 
-      // Third overtone (Subtle Double Octave 4.0x) - gentle metallic breeze
+      // Third overtone - gentle background breeze
       const osc4 = ctx.createOscillator();
       osc4.type = 'sine';
       osc4.frequency.setValueAtTime(f0 * 4.0, now);
@@ -113,11 +113,11 @@ export default function BreathingSimulator({ onBookCall }: BreathingSimulatorPro
       lfoGain.connect(osc1.frequency);
       lfoGain.connect(osc2.frequency);
 
-      // Volume mixers - prioritizing the deep base fundamental
-      const gain1 = ctx.createGain(); gain1.gain.setValueAtTime(0.65, now);
-      const gain2 = ctx.createGain(); gain2.gain.setValueAtTime(0.20, now);
-      const gain3 = ctx.createGain(); gain3.gain.setValueAtTime(0.10, now);
-      const gain4 = ctx.createGain(); gain4.gain.setValueAtTime(0.05, now);
+      // Volume mixers - prioritizing the deep base fundamental for immense warmth
+      const gain1 = ctx.createGain(); gain1.gain.setValueAtTime(0.75, now);
+      const gain2 = ctx.createGain(); gain2.gain.setValueAtTime(0.12, now);
+      const gain3 = ctx.createGain(); gain3.gain.setValueAtTime(0.04, now);
+      const gain4 = ctx.createGain(); gain4.gain.setValueAtTime(0.01, now);
 
       // Connect LFO as volume modulator (tremolo) on overtones to synthesize physical friction spin
       const lfoVolumeGain = ctx.createGain();
@@ -207,53 +207,53 @@ export default function BreathingSimulator({ onBookCall }: BreathingSimulatorPro
         // Inhale: Sound opens up, pitches elevate, volume swells majestically
         if (osc1Ref.current) {
           osc1Ref.current.frequency.cancelScheduledValues(now);
-          osc1Ref.current.frequency.exponentialRampToValueAtTime(142.00, now + 3.5);
+          osc1Ref.current.frequency.exponentialRampToValueAtTime(114.00, now + 3.5);
         }
         if (osc2Ref.current) {
           osc2Ref.current.frequency.cancelScheduledValues(now);
-          osc2Ref.current.frequency.exponentialRampToValueAtTime(142.10 * 2.0, now + 3.5);
+          osc2Ref.current.frequency.exponentialRampToValueAtTime(114.00 * 2.0, now + 3.5);
         }
-        mainGainRef.current.gain.linearRampToValueAtTime(0.35, now + 3.0);
+        mainGainRef.current.gain.linearRampToValueAtTime(0.32, now + 3.0);
       } else if (phase === 'hold1') {
         // Hold 1 (fullness): Deeply resonant, stable, shimmering chime sustain
         if (osc1Ref.current) {
           osc1Ref.current.frequency.cancelScheduledValues(now);
-          osc1Ref.current.frequency.exponentialRampToValueAtTime(138.10, now + 2.0);
+          osc1Ref.current.frequency.exponentialRampToValueAtTime(110.00, now + 2.0);
         }
         if (osc2Ref.current) {
           osc2Ref.current.frequency.cancelScheduledValues(now);
-          osc2Ref.current.frequency.exponentialRampToValueAtTime(138.10 * 2.0, now + 2.0);
+          osc2Ref.current.frequency.exponentialRampToValueAtTime(110.00 * 2.0, now + 2.0);
         }
-        mainGainRef.current.gain.linearRampToValueAtTime(0.28, now + 2.0);
+        mainGainRef.current.gain.linearRampToValueAtTime(0.24, now + 2.0);
       } else if (phase === 'exhale') {
         // Exhale: Release of breath, frequency drops, sound gets deeper and warmer
         if (osc1Ref.current) {
           osc1Ref.current.frequency.cancelScheduledValues(now);
-          osc1Ref.current.frequency.exponentialRampToValueAtTime(134.10, now + 3.5);
+          osc1Ref.current.frequency.exponentialRampToValueAtTime(106.00, now + 3.5);
         }
         if (osc2Ref.current) {
           osc2Ref.current.frequency.cancelScheduledValues(now);
-          osc2Ref.current.frequency.exponentialRampToValueAtTime(134.10 * 2.0, now + 3.5);
+          osc2Ref.current.frequency.exponentialRampToValueAtTime(106.00 * 2.0, now + 3.5);
         }
-        mainGainRef.current.gain.linearRampToValueAtTime(0.18, now + 3.5);
+        mainGainRef.current.gain.linearRampToValueAtTime(0.15, now + 3.5);
       } else if (phase === 'hold2') {
         // Hold 2 (emptiness): Deep baseline carrier, ultimate silence and stillness
         if (osc1Ref.current) {
           osc1Ref.current.frequency.cancelScheduledValues(now);
-          osc1Ref.current.frequency.exponentialRampToValueAtTime(130.00, now + 3.0);
+          osc1Ref.current.frequency.exponentialRampToValueAtTime(102.00, now + 3.0);
         }
         if (osc2Ref.current) {
           osc2Ref.current.frequency.cancelScheduledValues(now);
-          osc2Ref.current.frequency.exponentialRampToValueAtTime(130.00 * 2.0, now + 3.0);
+          osc2Ref.current.frequency.exponentialRampToValueAtTime(102.00 * 2.0, now + 3.0);
         }
-        mainGainRef.current.gain.linearRampToValueAtTime(0.12, now + 3.0);
+        mainGainRef.current.gain.linearRampToValueAtTime(0.10, now + 3.0);
       }
     } catch (e) {
       console.warn("Failed to update frequencies synchronously:", e);
     }
   }, [phase, isRunning, soundEnabled]);
 
-  // Interval to countdown timeLeft by 1 second
+  // Unified single-interval timer managing both numerical countdown & transition state-machine
   useEffect(() => {
     if (!isRunning) {
       if (timerRef.current) clearInterval(timerRef.current);
@@ -261,44 +261,41 @@ export default function BreathingSimulator({ onBookCall }: BreathingSimulatorPro
     }
 
     timerRef.current = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          // Transition to next phase of Sama Vritti Pranayama
+          setPhase((current) => {
+            const getNextPhase = (p: 'inhale' | 'hold1' | 'exhale' | 'hold2') => {
+              if (p === 'inhale') return 'hold1';
+              if (p === 'hold1') return 'exhale';
+              if (p === 'exhale') return 'hold2';
+              return 'inhale';
+            };
+            const next = getNextPhase(current);
+            if (current === 'hold2') {
+              setCycleCount((c) => {
+                const nextCycle = c + 1;
+                if (nextCycle >= 4) {
+                  setIsRunning(false);
+                  setIsFinished(true);
+                  if (timerRef.current) clearInterval(timerRef.current);
+                  return 0;
+                }
+                return nextCycle;
+              });
+            }
+            return next;
+          });
+          return 4; // Reset countdown for the next 4-second hold
+        }
+        return prev - 1;
+      });
     }, 1000);
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, [isRunning]);
-
-  // Phase transition state machine keyed robustly to timeLeft
-  useEffect(() => {
-    if (!isRunning) return;
-
-    if (timeLeft <= 0) {
-      const getNextPhase = (current: 'inhale' | 'hold1' | 'exhale' | 'hold2') => {
-        if (current === 'inhale') return 'hold1';
-        if (current === 'hold1') return 'exhale';
-        if (current === 'exhale') return 'hold2';
-        return 'inhale';
-      };
-
-      setPhase((current) => {
-        const next = getNextPhase(current);
-        if (current === 'hold2') {
-          setCycleCount((c) => {
-            const nextCycle = c + 1;
-            if (nextCycle >= 4) {
-              setIsRunning(false);
-              setIsFinished(true);
-              return 0;
-            }
-            return nextCycle;
-          });
-        }
-        return next;
-      });
-      setTimeLeft(4);
-    }
-  }, [timeLeft, isRunning]);
 
   const handleStartStop = () => {
     initSynth();
