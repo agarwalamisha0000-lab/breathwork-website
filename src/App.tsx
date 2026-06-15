@@ -31,8 +31,7 @@ import {
   Compass,
   Sliders,
   DollarSign,
-  Trash2,
-  Image
+  Trash2
 } from 'lucide-react';
 import { HotelInfo, Inquiry, ProposalResult } from './types.js';
 import BreathingSimulator from './components/BreathingSimulator.tsx';
@@ -40,66 +39,8 @@ import RoiCalculator from './components/RoiCalculator.tsx';
 import LeadDashboard from './components/LeadDashboard.tsx';
 // @ts-expect-error
 import amishaBgDefault from './assets/images/amisha_bg_1781468937770.jpg';
-// Pre-seeded high-fidelity gallery images representing high-end wellness atmospheres
-const INITIAL_GALLERY_IMAGES = [
-  {
-    url: "your-photo-1-headstand.jpg",
-    caption: "Sirsasana alignment representing vertical oxygenation balance, captured outdoors amidst coastal palms.",
-    tag: "Pranayama",
-    isUserPlaceholder: true,
-    poseName: "Sirsasana (Headstand) Posture",
-    filename: "your-photo-1-headstand.jpg",
-    instruction: "Replace this block with your sirsasana headstand photo."
-  },
-  {
-    url: "your-photo-2-chakras.jpg",
-    caption: "Deep seated lotus meditation with active energetic chakra overlays, demonstrating prana flow alignment.",
-    tag: "Chakras",
-    isUserPlaceholder: true,
-    poseName: "Lotus Chakra Posture",
-    filename: "your-photo-2-chakras.jpg",
-    instruction: "Replace this block with your chakra meditation photo."
-  },
-  {
-    url: "your-photo-3-meditation.jpg",
-    caption: "Indoor meditative centering in Padmasana, representing absolute sensory quietness (Antar Mouna).",
-    tag: "Meditation",
-    isUserPlaceholder: true,
-    poseName: "Indoor Meditation Posture",
-    filename: "your-photo-3-meditation.jpg",
-    instruction: "Replace this block with your indoor meditation photo."
-  },
-  {
-    url: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=600&auto=format&fit=crop",
-    caption: "Deep Pranayama alignment at a luxury resort in Himalayas.",
-    tag: "Pranayama"
-  },
-  {
-    url: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=600&auto=format&fit=crop",
-    caption: "Sunset Breath Purification circles guiding guests at coastal retreat.",
-    tag: "Residency"
-  },
-  {
-    url: "https://images.unsplash.com/photo-1515377905703-c4788e51af15?q=80&w=600&auto=format&fit=crop",
-    caption: "Sound healing vibration therapy with premium bronze singing bowls.",
-    tag: "Chakras"
-  },
-  {
-    url: "https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?q=80&w=600&auto=format&fit=crop",
-    caption: "Absolute Stillness - morning Vedic breathing on a tranquil beach stage.",
-    tag: "Vedic Wisdom"
-  },
-  {
-    url: "https://images.unsplash.com/photo-1511295742364-92767fa62d9f?q=80&w=600&auto=format&fit=crop",
-    caption: "Restorative Yoga Nidra layouts crafted with pure linen bolsters.",
-    tag: "Sleep Better"
-  },
-  {
-    url: "https://images.unsplash.com/photo-1545205597-3d9d02c29597?q=80&w=600&auto=format&fit=crop",
-    caption: "Gentle alternate-nostril breathing (Nadi Shodhana) for stress release.",
-    tag: "Nervous System"
-  },
-];
+// @ts-expect-error
+import vedicPortraitImg from './assets/images/vedic_breathwork_portrait_1781552365350.jpg';
 
 // Seed initial B2B proposal for hotel directors seeking alignment
 const INITIAL_DEMO_PROPOSAL: ProposalResult = {
@@ -156,28 +97,10 @@ const INITIAL_DEMO_PROPOSAL: ProposalResult = {
 export default function App() {
   // Navigation states
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [showAdminTab, setShowAdminTab] = useState(false);
-
   // User uploaded portrait/image states
   const [userUploadedBg, setUserUploadedBg] = useState<string>("");
-  const [bgUrl, setBgUrl] = useState<string>(amishaBgDefault);
+  const [bgUrl, setBgUrl] = useState<string>(vedicPortraitImg);
   const [isDragging, setIsDragging] = useState<boolean>(false);
-
-  // Gallery dynamic states
-  const [galleryImages, setGalleryImages] = useState(INITIAL_GALLERY_IMAGES);
-  const [draggedOverIndex, setDraggedOverIndex] = useState<number | null>(null);
-
-  const handleGalleryDrop = (index: number, file: File) => {
-    const previewUrl = URL.createObjectURL(file);
-    setGalleryImages(prev => {
-      const copy = [...prev];
-      copy[index] = {
-        ...copy[index],
-        previewUrl: previewUrl
-      };
-      return copy;
-    });
-  };
 
   // Contact Form Inputs
   const [fullName, setFullName] = useState("");
@@ -227,11 +150,11 @@ export default function App() {
         if (res.ok) {
           setBgUrl(`/amisha_bg.jpg?t=${Date.now()}`);
         } else {
-          setBgUrl(amishaBgDefault);
+          setBgUrl(vedicPortraitImg);
         }
       })
       .catch(() => {
-        setBgUrl(amishaBgDefault);
+        setBgUrl(vedicPortraitImg);
       });
     
     fetchInquiries();
@@ -433,31 +356,11 @@ export default function App() {
             <button onClick={() => smoothScroll('who-i-serve')} className="hover:text-[#C084FC] transition-colors cursor-pointer">Syllabus</button>
             <button onClick={() => smoothScroll('what-i-teach')} className="hover:text-[#C084FC] transition-colors cursor-pointer">Methodology</button>
             <button onClick={() => smoothScroll('interactive-box-breathing')} className="hover:text-[#C084FC] transition-colors cursor-pointer">Box Breather</button>
-            <button onClick={() => smoothScroll('moments-of-breath')} className="hover:text-[#C084FC] transition-colors cursor-pointer">Gallery</button>
-            <button onClick={() => smoothScroll('testimonials')} className="hover:text-[#C084FC] transition-colors cursor-pointer">Reviews</button>
             <button onClick={() => smoothScroll('contact-form-section')} className="hover:text-[#C084FC] transition-colors cursor-pointer">Contact</button>
           </nav>
 
           {/* Call to Actions on Header */}
           <div className="hidden sm:flex items-center gap-3">
-            <button
-              onClick={() => {
-                setShowAdminTab(!showAdminTab);
-                setTimeout(() => {
-                  smoothScroll("admin-and-leads-registry");
-                }, 100);
-              }}
-              className={`text-[10px] font-mono px-3.5 py-2 rounded-xl border transition-all cursor-pointer ${
-                showAdminTab 
-                  ? 'bg-primary-purple/20 border-[#C084FC]/50 text-white font-bold' 
-                  : 'bg-white/5 hover:bg-white/10 border-white/10 text-gray-400'
-              }`}
-            >
-              <div className="flex items-center gap-1.5">
-                <Lock className="w-3 h-3" />
-                {showAdminTab ? "Hide Console" : "Leads Console"}
-              </div>
-            </button>
             <button
               onClick={() => smoothScroll('contact-form-section')}
               className="px-5 py-2.5 bg-gradient-to-r from-mid-purple to-primary-purple text-white hover:opacity-90 rounded-xl text-xs font-mono tracking-wider uppercase transition-all glow-purple cursor-pointer"
@@ -491,21 +394,9 @@ export default function App() {
                 <button onClick={() => smoothScroll('who-i-serve')} className="text-left py-2 border-b border-white/5 text-gray-300">Who I Serve</button>
                 <button onClick={() => smoothScroll('what-i-teach')} className="text-left py-2 border-b border-white/5 text-gray-300">Respiration Subjects</button>
                 <button onClick={() => smoothScroll('interactive-box-breathing')} className="text-left py-2 border-b border-white/5 text-gray-300">Box Breathing App</button>
-                <button onClick={() => smoothScroll('moments-of-breath')} className="text-left py-2 border-b border-white/5 text-gray-300">Physical Gallery</button>
-                <button onClick={() => smoothScroll('testimonials')} className="text-left py-2 border-b border-white/5 text-gray-300">Client Stories</button>
                 <button onClick={() => smoothScroll('contact-form-section')} className="text-left py-2 text-gray-300">Secure Consultation</button>
                 
                 <div className="pt-4 flex flex-col gap-2.5">
-                  <button
-                    onClick={() => {
-                      setShowAdminTab(!showAdminTab);
-                      setMobileMenuOpen(false);
-                      setTimeout(() => smoothScroll("admin-and-leads-registry"), 150);
-                    }}
-                    className="w-full text-center py-3 rounded-lg bg-white/5 border border-white/10 text-xs text-white"
-                  >
-                    {showAdminTab ? "Hide Backoffice Dashboard" : "Show Backoffice Dashboard"}
-                  </button>
                   <button
                     onClick={() => smoothScroll('contact-form-section')}
                     className="w-full py-3 bg-gradient-to-r from-[#7C3AED] to-[#A855F7] text-white text-center rounded-lg font-bold"
@@ -598,67 +489,25 @@ export default function App() {
 
             </div>
 
-            {/* Right Column: Hero Portrait & Live Upload Manager */}
-            <div 
-              className="lg:col-span-5 relative group z-10"
-              onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-              onDragLeave={() => setIsDragging(false)}
-              onDrop={handleDrop}
-            >
+            {/* Right Column: Beautiful AI Generated Portrait Frame representing Vedic Respiration coach */}
+            <div className="lg:col-span-5 relative group z-10">
               {/* Outer decorative glowing ring */}
               <div className="absolute inset-0 bg-[#A855F7]/10 rounded-3xl translate-x-2 translate-y-2 blur-md transition-transform group-hover:translate-x-3 group-hover:translate-y-3" />
               
-              <div className={`relative rounded-3xl overflow-hidden aspect-[4/5] border ${isDragging ? 'border-primary-purple bg-primary-purple/10 scale-[1.01]' : 'border-white/10'} bg-[#120A20] shadow-2xl flex flex-col justify-between p-6 overflow-hidden transition-all duration-300`}>
+              <div className="relative rounded-3xl overflow-hidden aspect-[4/5] border border-white/10 bg-[#120A20] shadow-2xl transition-all duration-500 hover:border-[#C084FC]/30">
                 
-                {/* Embedded absolute background - loads her uploaded photo from server */}
-                <div 
-                  className="absolute inset-0 bg-cover bg-center index-0 pointer-events-none transition-all duration-1000"
-                  style={{ 
-                    backgroundImage: userUploadedBg ? `url(${userUploadedBg})` : `url(${bgUrl})`
-                  }}
+                {/* Embedded absolute background - loads our stunning AI portrait of Amisha */}
+                <img 
+                  src={userUploadedBg ? userUploadedBg : bgUrl} 
+                  alt="Amisha Agarwal Vedic Respiration Coach" 
+                  referrerPolicy="no-referrer"
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.03]"
                 />
                 
-                {/* Overlay to ensure light readability on the portrait cards */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-[#0A0A0A]/40 z-1 pointer-events-none" />
-
-                {/* Card Top Information HUD */}
-                <div className="relative z-10 flex justify-between items-start">
-                  <div className="bg-[#050309]/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/5 flex items-center gap-1.5">
-                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-[9px] font-mono tracking-widest text-[#C084FC] uppercase font-bold">Vedic Coach Status</span>
-                  </div>
-                  
-                  {/* Floating Action Badge to prompt upload */}
-                  <label className="bg-[#050309]/90 hover:bg-[#A855F7]/80 backdrop-blur-md p-2.5 rounded-full border border-white/10 text-white cursor-pointer transition-all flex items-center justify-center shadow-lg group-hover:scale-105" title="Customize Hero Portrait">
-                    <Upload className="w-4 h-4 text-bright-purple" />
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      className="hidden" 
-                      onChange={handlePhotoUpload} 
-                    />
-                  </label>
-                </div>
-
-                {/* Card Bottom HUD: interactive drag instructions */}
-                <div className="relative z-10 bg-[#050309]/85 backdrop-blur-md p-4 rounded-2xl border border-white/5 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="text-sm font-display font-semibold text-white uppercase tracking-wider">AMISHA AGARWAL</h4>
-                      <p className="text-[10px] font-mono text-gray-400">Authentic Portrait Frame</p>
-                    </div>
-                    <span className="text-[9px] font-mono text-[#C084FC] border border-[#A855F7]/20 px-2 py-0.5 rounded-full uppercase bg-[#primary-purple]/10">Hyderabad, IN</span>
-                  </div>
-                  
-                  {/* Upload message helper */}
-                  <p className="text-[10px] text-gray-400 leading-normal border-t border-white/5 pt-2 flex items-center gap-1.5 font-mono">
-                    <ArrowDownToLine className="w-3.5 h-3.5 text-bright-purple animate-bounce" /> 
-                    <span>Drag and drop your own photo directly inside this card to replace permanently.</span>
-                  </p>
-                </div>
+                {/* Light gradient overlay to blend into the luxury atmosphere */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A]/40 via-transparent to-[#0A0A0A]/20 pointer-events-none" />
 
               </div>
-
             </div>
 
           </div>
@@ -864,271 +713,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* SECTION 5 — GALLERY (MOMENTS OF BREATH) */}
-        <section className="relative py-24 bg-[#080010] border-b border-white/5" id="moments-of-breath">
-          
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-            
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 border-b border-white/5 pb-6">
-              <div>
-                <span className="text-bright-purple font-mono text-xs tracking-[0.2em] uppercase block">VISUAL CHRONOLOGY</span>
-                <h2 className="text-2xl md:text-3xl font-syne font-bold uppercase text-white tracking-tight mt-1">
-                  Moments of Breath
-                </h2>
-                <p className="text-gray-400 text-xs mt-1 max-w-lg font-light">
-                  A visual record of our global hotel residencies, group classes, and immersive workshops.
-                </p>
-              </div>
-            </div>
 
-            {/* Beautiful Mosaic / Masonry Gallery Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-              {galleryImages.map((img: any, idx) => {
-                if (img.isUserPlaceholder) {
-                  const isOver = draggedOverIndex === idx;
-                  return (
-                    <div 
-                      key={idx}
-                      onDragOver={(e) => {
-                        e.preventDefault();
-                        setDraggedOverIndex(idx);
-                      }}
-                      onDragLeave={() => {
-                        setDraggedOverIndex(null);
-                      }}
-                      onDrop={(e) => {
-                        e.preventDefault();
-                        setDraggedOverIndex(null);
-                        const files = e.dataTransfer.files;
-                        if (files && files[0] && files[0].type.startsWith("image/")) {
-                          handleGalleryDrop(idx, files[0]);
-                        }
-                      }}
-                      onClick={() => {
-                        const input = document.getElementById(`gallery-file-input-${idx}`);
-                        if (input) {
-                          (input as HTMLInputElement).click();
-                        }
-                      }}
-                      className={`group relative rounded-2xl overflow-hidden aspect-square border transition-all duration-500 shadow-2xl flex flex-col justify-end p-5 cursor-pointer ${
-                        img.previewUrl 
-                          ? 'border-primary-purple bg-primary-purple/5 hover:border-bright-purple scale-[1.01] hover:scale-[1.02]' 
-                          : isOver 
-                            ? 'border-green-400 bg-purple-950/40 scale-[1.02] shadow-green-500/10' 
-                            : 'border-[#a855f7]/30 bg-[#120A20] hover:border-bright-purple hover:shadow-purple-500/10'
-                      }`}
-                    >
-                      <input 
-                        type="file" 
-                        id={`gallery-file-input-${idx}`}
-                        className="hidden" 
-                        accept="image/*"
-                        onChange={(e) => {
-                          const files = e.target.files;
-                          if (files && files[0]) {
-                            handleGalleryDrop(idx, files[0]);
-                          }
-                        }}
-                      />
-
-                      {/* Standard HTML <img> tag pointing to the user's placeholder filename as requested */}
-                      {(img.previewUrl || img.url) && (
-                        <img 
-                          src={img.previewUrl || img.url} 
-                          alt={img.caption} 
-                          referrerPolicy="no-referrer"
-                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 z-10"
-                          style={{
-                            display: img.previewUrl ? 'block' : undefined
-                          }}
-                          onError={(e) => {
-                            // Gracefully hides the browser's default broken image icon before they replace the files
-                            if (!img.previewUrl) {
-                              e.currentTarget.style.display = 'none';
-                            }
-                          }}
-                        />
-                      )}
-
-                      {/* High-quality styled background placeholder that shows if the file is missing or not previewed */}
-                      {!img.previewUrl && (
-                        <div className="absolute inset-0 bg-[#0e061c] bg-gradient-to-b from-[#130926]/45 via-[#0d051a] to-[#080212] flex flex-col justify-between p-5 z-0 border border-white/5">
-                          {/* Nested dashed border frame representing the image container slot */}
-                          <div className={`absolute inset-2 border-2 border-dashed rounded-xl pointer-events-none z-0 transition-colors ${
-                            isOver ? 'border-green-400 bg-green-500/5' : 'border-[#a855f7]/20'
-                          }`} />
-
-                          {/* Top banner */}
-                          <div className="flex justify-between items-center z-10">
-                            <span className="text-[9px] font-mono tracking-widest text-[#C084FC] bg-[#7c3aed]/10 border border-[#7c3aed]/30 px-2.5 py-1 rounded-full uppercase">
-                              {img.tag}
-                            </span>
-                            <div className="flex items-center gap-1.5 bg-[#0a0412]/80 backdrop-blur-sm border border-white/5 py-0.5 px-2 rounded-full">
-                              <Image className={`w-3 h-3 text-[#C084FC] ${isOver ? 'text-green-400 animate-spin' : 'animate-pulse'}`} />
-                              <span className="text-[8px] font-mono text-gray-400 uppercase tracking-widest">
-                                {isOver ? 'Drop Image Here!' : 'Image Container'}
-                              </span>
-                              <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${isOver ? 'bg-green-400' : 'bg-yellow-500'}`} />
-                            </div>
-                          </div>
-
-                          {/* Middle icon illustration representing classical yoga lineage */}
-                          <div className="flex flex-col items-center justify-center py-2 text-center z-10">
-                            <div className="w-10 h-10 rounded-full bg-[#1b1031] border border-[#a855f7]/20 flex items-center justify-center text-[#C084FC] mb-2 group-hover:scale-110 transition-transform duration-300 shadow-inner">
-                              <Wind className="w-5 h-5 text-bright-purple animate-pulse" />
-                            </div>
-                            <p className="text-[8.5px] font-mono text-gray-500 uppercase tracking-widest leading-none">CORE SADHANA PRACTICE</p>
-                            <h4 className="text-white text-[11px] font-semibold tracking-wider uppercase mt-1 text-center">{img.poseName}</h4>
-                          </div>
-
-                          {/* Bottom user action block */}
-                          <div className="bg-[#050308]/95 border border-white/5 p-3 rounded-xl space-y-1 text-left z-10">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-1.5">
-                                <div className="w-1.5 h-1.5 rounded-full bg-purple-500" />
-                                <span className="text-[8px] font-mono font-bold tracking-widest text-bright-purple uppercase">DRAG & DROP IMAGE</span>
-                              </div>
-                              <span className="text-[8.5px] font-mono text-yellow-400 font-semibold select-all font-sans">"{img.url}"</span>
-                            </div>
-                            <p className="text-[9px] text-gray-400 leading-normal border-t border-white/5 pt-1">
-                              Drag-and-drop here or click to import. Store your final image as public/<span className="text-white font-mono font-bold select-all bg-[#120a20] px-1 py-0.5 rounded border border-white/5">{img.url}</span> later.
-                            </p>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Hover Text Overlays over the actual image (once the file is loaded!) */}
-                      {img.previewUrl && (
-                        <>
-                          <div className="absolute inset-0 bg-[#0A0A0A]/95 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-15 flex flex-col justify-end p-6" />
-                          <div className="absolute inset-x-0 bottom-0 z-20 translate-y-6 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 p-6 flex flex-col space-y-2 text-left pointer-events-none">
-                            <span className="text-[9px] font-mono text-[#C084FC] uppercase tracking-widest font-bold">Lineage Documentation</span>
-                            <h4 className="text-white text-sm font-display font-bold uppercase tracking-wider">{img.poseName}</h4>
-                            <p className="text-gray-300 text-xs leading-normal font-sans tracking-wide">
-                              {img.caption}
-                            </p>
-                            <div className="flex items-center justify-between border-t border-white/10 pt-2 mt-1">
-                              <span className="text-[9px] font-mono text-gray-500 uppercase">
-                                File: {img.url}
-                              </span>
-                              <span className="text-[8.5px] font-mono text-green-400 uppercase font-semibold">
-                                Live Preview Active
-                              </span>
-                            </div>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  );
-                } else {
-                  // Normal unsplash residency images
-                  return (
-                    <div 
-                      key={idx}
-                      className="group relative rounded-2xl overflow-hidden aspect-square border border-white/10 bg-[#120A20] transition-all hover:border-primary-purple duration-500 shadow-xl"
-                    >
-                      {/* Photo background */}
-                      <img 
-                        src={img.url} 
-                        alt={img.caption} 
-                        referrerPolicy="no-referrer"
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                      
-                      {/* Dark gradients on Hover */}
-                      <div className="absolute inset-0 bg-[#0A0A0A]/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-6 z-10" />
-
-                      {/* Absolute Badge */}
-                      <span className="absolute top-4 left-4 z-20 bg-primary-purple/20 text-bright-purple border border-primary-purple/40 font-mono text-[9px] px-2.5 py-0.5 rounded-full uppercase tracking-widest">
-                        {img.tag}
-                      </span>
-
-                      {/* Hover visual textual overlay details */}
-                      <div className="absolute inset-x-0 bottom-0 z-20 translate-y-6 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 p-6 flex flex-col space-y-1 text-left">
-                        <span className="text-[9px] font-mono text-[#C084FC] uppercase tracking-widest font-bold">Residency & Ambience</span>
-                        <p className="text-white text-xs leading-normal font-sans tracking-wide">
-                          {img.caption}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                }
-              })}
-            </div>
-
-          </div>
-        </section>
-
-        {/* SECTION 6 — TESTIMONIALS (WHAT PEOPLE ARE SAYING) */}
-        <section className="relative py-24 border-b border-white/5" id="testimonials">
-          
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-            
-            <div className="text-center max-w-xl mx-auto space-y-3">
-              <span className="text-bright-purple font-mono text-xs tracking-[0.2em] uppercase block">CREDIBILITY LEDGER</span>
-              <h2 className="text-2xl md:text-3xl font-syne font-bold uppercase text-white tracking-normal leading-tight">
-                What People are Saying
-              </h2>
-              <p className="text-gray-400 text-sm font-light">
-                Real results experienced by luxury resort directors, corporate HR managers, and coaching clients.
-              </p>
-            </div>
-
-            {/* Testimonials horizontal scrolling lists */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-              
-              <div className="border border-white/5 bg-[#120A20]/30 hover:bg-[#120A20]/50 p-6 rounded-2xl relative flex flex-col justify-between hover:border-primary-purple/20 transition-all duration-300">
-                <span className="absolute top-4 right-6 text-primary-purple font-serif text-5xl opacity-40">“</span>
-                <div className="space-y-4">
-                  <p className="text-xs text-gray-300 italic leading-relaxed pt-2">
-                    "Amisha redesigned our resort wellness curriculum completely. Bypassing uncompetitive standard massage tables, we configured a signature sunrise alternate-nostril work. In under 60 days, our TripAdvisor brand rating raised +14% explicitly citing Amisha's Vedic respiration protocols. Exemplary."
-                  </p>
-                </div>
-                <div className="pt-6 border-t border-white/5 mt-6 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary-purple/20 border border-primary-purple/30 flex items-center justify-center font-display text-xs text-bright-purple font-bold">SM</div>
-                  <div>
-                    <h4 className="text-xs text-white font-bold tracking-wide uppercase">Siddharth Mishra</h4>
-                    <p className="text-[9px] font-mono text-[#C084FC]">General Manager, Svatma Heritage Resorts</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="border border-white/5 bg-[#120A20]/30 hover:bg-[#120A20]/50 p-6 rounded-2xl relative flex flex-col justify-between hover:border-primary-purple/20 transition-all duration-300">
-                <span className="absolute top-4 right-6 text-primary-purple font-serif text-5xl opacity-40">“</span>
-                <div className="space-y-4">
-                  <p className="text-xs text-gray-300 italic leading-relaxed pt-2">
-                    "Burnout was severely restricting our research teams' productivity lines. Amisha's breathing workshops completely resolved the systemic autonomic stress. She gave our teams highly predictable somatic mechanisms to immediately quiet pacing thoughts and trigger deep executive focus. It's a genuine operational strategy."
-                  </p>
-                </div>
-                <div className="pt-6 border-t border-white/5 mt-6 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary-purple/20 border border-primary-purple/30 flex items-center justify-center font-display text-xs text-bright-purple font-bold">AK</div>
-                  <div>
-                    <h4 className="text-xs text-white font-bold tracking-wide uppercase">Ananya Kulkarni</h4>
-                    <p className="text-[9px] font-mono text-[#C084FC]">HR Director, Synergist Automation Tech</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="border border-white/5 bg-[#120A20]/30 hover:bg-[#120A20]/50 p-6 rounded-2xl relative flex flex-col justify-between hover:border-primary-purple/20 transition-all duration-300">
-                <span className="absolute top-4 right-6 text-primary-purple font-serif text-5xl opacity-40">“</span>
-                <div className="space-y-4">
-                  <p className="text-xs text-gray-300 italic leading-relaxed pt-2">
-                    "I had cataloged intense restless insomnia for 4 years before consulting Amisha. Her private 1-on-1 Bhramari and slow-rhythm sequences changed everything. My brain can finally enter complete baseline decompression without drugs. Deeply grateful."
-                  </p>
-                </div>
-                <div className="pt-6 border-t border-white/5 mt-6 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary-purple/20 border border-primary-purple/30 flex items-center justify-center font-display text-xs text-bright-purple font-bold">RK</div>
-                  <div>
-                    <h4 className="text-xs text-white font-bold tracking-wide uppercase">Raunaq Kapoor</h4>
-                    <p className="text-[9px] font-mono text-[#C084FC]">Co-founder, Zenith Analytics Ltd</p>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-        </section>
 
         {/* SECTION 7 — CONTACT FORM (LET'S BREATHE TOGETHER) */}
         <section className="relative py-24 bg-[#0A0A0A]" id="contact-form-section">
@@ -1285,44 +870,6 @@ export default function App() {
           </div>
         </section>
 
-        {/* OPERATIONS LEDGER & ADMIN PANEL (ADDITIONAL SECURE COMPONENT) */}
-        <AnimatePresence>
-          {showAdminTab && (
-            <motion.div 
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 border-t border-white/5 bg-[#080010]"
-              id="admin-and-leads-registry"
-            >
-              <div className="space-y-8">
-                <div className="flex justify-between items-center bg-[#120A20]/85 p-5 rounded-2xl border border-primary-purple/20">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-xl bg-primary-purple/20 border border-primary-purple/35 text-bright-purple">
-                      <Sliders className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-display font-bold text-white uppercase">Secure Backoffice Workspace</h4>
-                      <p className="text-[11px] text-gray-400">Manage custom proposals, test database entries, and verify customer CRM inquiries in real-time.</p>
-                    </div>
-                  </div>
-                  <button 
-                    onClick={() => setShowAdminTab(false)}
-                    className="p-1 px-3 border border-white/10 hover:border-white/20 rounded-lg text-xs font-mono text-gray-400 hover:text-white"
-                  >
-                    Hide Pane
-                  </button>
-                </div>
-
-                <LeadDashboard 
-                  inquiries={inquiries} 
-                  onRefresh={fetchInquiries} 
-                  onSelectInquiry={handleSelectInquiry} 
-                />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
 
       </main>
 
