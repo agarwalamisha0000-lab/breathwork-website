@@ -39,6 +39,7 @@ import RoiCalculator from './components/RoiCalculator.tsx';
 import LeadDashboard from './components/LeadDashboard.tsx';
 // @ts-expect-error
 import amishaBgDefault from './assets/images/amisha_bg_1781468937770.jpg';
+import PhotoGallery from './components/PhotoGallery';
 // @ts-expect-error
 import vedicPortraitImg from './assets/images/vedic_breathwork_portrait_1781552365350.jpg';
 
@@ -716,7 +717,7 @@ export default function App() {
           </div>
         </section>
 
-
+        <PhotoGallery />
 
         {/* SECTION 7 — CONTACT FORM (LET'S BREATHE TOGETHER) */}
         <section className="relative py-24 bg-[#0A0A0A]" id="contact-form-section">
