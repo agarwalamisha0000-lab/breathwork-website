@@ -42,6 +42,9 @@ import amishaBgDefault from './assets/images/amisha_bg_1781468937770.jpg';
 // @ts-expect-error
 import vedicPortraitImg from './assets/images/vedic_breathwork_portrait_1781552365350.jpg';
 
+// @ts-expect-error
+import amishaPortraitFinalImg from './assets/images/amisha_portrait_final_1781646412139.jpg';
+
 // Seed initial B2B proposal for hotel directors seeking alignment
 const INITIAL_DEMO_PROPOSAL: ProposalResult = {
   title: "Vedic Respiratory Integration Program",
@@ -498,7 +501,7 @@ export default function App() {
                 
                 {/* Embedded absolute background - loads our stunning AI portrait of Amisha */}
                 <img 
-                  src={userUploadedBg ? userUploadedBg : bgUrl} 
+                  src={amishaPortraitFinalImg} 
                   alt="Amisha Agarwal Vedic Respiration Coach" 
                   referrerPolicy="no-referrer"
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.03]"
