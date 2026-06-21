@@ -44,7 +44,7 @@ import PhotoGallery from './components/PhotoGallery';
 import vedicPortraitImg from './assets/images/vedic_breathwork_portrait_1781552365350.jpg';
 
 // @ts-expect-error
-import amishaPortraitFinalImg from './assets/images/amisha_portrait_final_1781646412139.jpg';
+import amishaPortraitFinalImg from './assets/images/Amisha.jpeg';
 
 // Seed initial B2B proposal for hotel directors seeking alignment
 const INITIAL_DEMO_PROPOSAL: ProposalResult = {
