@@ -1,15 +1,8 @@
 import React, { useState } from 'react';
 import { Upload, X } from 'lucide-react';
 
-// @ts-expect-error
-import chakrasImg from '../assets/images/chakras.jpg';
-// @ts-expect-error
-import headstandImg from '../assets/images/headstand.jpg';
-// @ts-expect-error
-import meditationImg from '../assets/images/meditation_black.jpg';
-
 export default function PhotoGallery() {
-  const [photos, setPhotos] = useState<(string | null)[]>([chakrasImg, headstandImg, meditationImg]);
+  const [photos, setPhotos] = useState<(string | null)[]>([null, null, null]);
 
   const handleUpload = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

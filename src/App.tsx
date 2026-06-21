@@ -443,7 +443,7 @@ export default function App() {
 
               <div className="space-y-4">
                 <h1 className="text-3xl sm:text-5xl lg:text-5xl font-syne font-bold tracking-tight text-white leading-[1.05] uppercase">
-                  Breathwork.<br />
+                  Ancient Breath.<br />
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#C084FC] via-[#A855F7] to-[#7C3AED] neon-text-purple">
                     Backed By Modern Science.
                   </span>
@@ -897,7 +897,7 @@ export default function App() {
             </div>
             
             <p className="text-gray-400 text-xs italic font-light">
-              Breathwork. Backed By Modern Science.
+              Ancient Breath. Backed By Modern Science.
             </p>
             <p className="text-gray-500 text-[10px] leading-relaxed font-light max-w-sm">
               We operate internationally to design premium somatic environments, private biofeedback curricula, and enterprise meditation structures. Lineage certified in Vedic Prana science.
