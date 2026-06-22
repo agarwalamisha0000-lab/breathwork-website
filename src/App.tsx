@@ -40,6 +40,7 @@ import LeadDashboard from './components/LeadDashboard.tsx';
 // @ts-expect-error
 import amishaBgDefault from './assets/images/amisha_bg_1781468937770.jpg';
 import PhotoGallery from './components/PhotoGallery';
+import TestimonialSection from './components/TestimonialSection';
 // @ts-expect-error
 import vedicPortraitImg from './assets/images/vedic_breathwork_portrait_1781552365350.jpg';
 
@@ -718,6 +719,7 @@ export default function App() {
         </section>
 
         <PhotoGallery />
+        <TestimonialSection />
 
         {/* SECTION 7 — CONTACT FORM (LET'S BREATHE TOGETHER) */}
         <section className="relative py-24 bg-[#0A0A0A]" id="contact-form-section">
@@ -776,7 +778,7 @@ export default function App() {
                     </div>
 
                     <p className="text-gray-400 text-xs sm:text-xs leading-relaxed max-w-md mx-auto">
-                      Thank you. Your inquiry details have been saved directly inside our secure corporate operations database. Amisha Agarwal will evaluate and reach out via telephone or email brief within 24 hours.
+                      Thank You for submitting the form. Amisha will reach out to you in 2 working days.
                     </p>
 
                     <button 
@@ -798,7 +800,7 @@ export default function App() {
                           required
                           value={fullName}
                           onChange={(e) => setFullName(e.target.value)}
-                          placeholder="Lord Shiva" 
+                          placeholder="John Doe" 
                           className="w-full bg-[#050309] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-primary-purple placeholder-gray-700 font-sans"
                         />
                       </div>

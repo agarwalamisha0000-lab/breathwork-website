@@ -5,9 +5,15 @@ import img1 from '../assets/images/Session Pic 1.png';
 import img2 from '../assets/images/Session Pic 2.png';
 // @ts-expect-error
 import img3 from '../assets/images/Session Pic 3.png';
+// @ts-expect-error
+import img4 from '../assets/images/Session pic 4.png';
+// @ts-expect-error
+import img5 from '../assets/images/Session pic 5.png';
+// @ts-expect-error
+import img6 from '../assets/images/Session pic 6.jpeg';
 
 export default function PhotoGallery() {
-  const photos = [img1, img2, img3];
+  const photos = [img1, img2, img3, img4, img5, img6];
 
   return (
     <section className="py-16 bg-[#0A0A0A]">
