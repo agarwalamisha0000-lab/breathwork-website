@@ -18,6 +18,7 @@ import {
   X,
   Building,
   Shield,
+  MessageCircle,
   Plane,
   Heart,
   Zap,
@@ -106,14 +107,6 @@ export default function App() {
   const [userUploadedBg, setUserUploadedBg] = useState<string>("");
   const [bgUrl, setBgUrl] = useState<string>(vedicPortraitImg);
   const [isDragging, setIsDragging] = useState<boolean>(false);
-
-  // Contact Form Inputs
-  const [fullName, setFullName] = useState("");
-  const [emailAddress, setEmailAddress] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [clientType, setClientType] = useState("Individual");
-  const [message, setMessage] = useState("");
-  const [formSubmitted, setFormSubmitted] = useState(false);
 
   // B2B proposal architecture toggles & inputs
   const [showB2BPlanner, setShowB2BPlanner] = useState(false);
@@ -218,42 +211,8 @@ export default function App() {
   };
 
   // Submit contact form to the real full-stack Express database!
-  const handleContactSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!fullName || !emailAddress) return;
+  // Removed handleContactSubmit as the contact form was removed.
 
-    const leadPayload = {
-      contactName: fullName,
-      contactEmail: emailAddress,
-      contactPhone: phoneNumber || "Not provided",
-      hotelInfo: {
-        hotelName: clientType === "Individual" ? `Private: ${fullName}` : `${clientType} Consultation`,
-        location: clientType === "Individual" ? "Delhi / Hyderabad" : "Remote / Corporate Office",
-        roomCount: clientType === "Corporate" ? 50 : 1,
-        averageRate: 0,
-        hasSpa: false,
-        targetDemographic: clientType,
-        focusTheme: message || "General Breathwork Coaching Inquiry"
-      }
-    };
-
-    try {
-      const response = await fetch("/api/inquiries", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(leadPayload)
-      });
-      if (response.ok) {
-        console.log("Form submitted successfully");
-      } else {
-        console.error("Form submission failed with status:", response.status);
-      }
-      setFormSubmitted(true);
-    } catch (error) {
-      console.error("Failed submitting contact details:", error);
-      setFormSubmitted(true); // Fallback graceful notification
-    }
-  };
 
   // Generate dynamic strategic partnership proposal via Gemini or local Vedic simulator
   const handleAIProposalGenerate = async (e: React.FormEvent) => {
@@ -560,7 +519,7 @@ export default function App() {
                 <div className="pt-6 border-t border-white/5 mt-6 flex items-center justify-between">
                   <span className="text-[10px] font-mono text-[#C084FC]">HOSPITALITY INTEGRATION</span>
                   <button 
-                    onClick={() => { setClientType('Hotel or Resort'); smoothScroll('contact-form-section'); }} 
+                    onClick={() => { smoothScroll('contact-form-section'); }} 
                     className="text-xs font-mono font-semibold text-white tracking-wider flex items-center gap-1.5 hover:text-bright-purple transition-all group-hover:translate-x-1.5 cursor-pointer"
                   >
                     B2B Proposal Architect <ArrowRight className="w-4 h-4 text-[#C084FC]" />
@@ -590,7 +549,7 @@ export default function App() {
                 <div className="pt-6 border-t border-white/5 mt-6 flex items-center justify-between">
                   <span className="text-[10px] font-mono text-[#C084FC]">ENTERPRISE AUDITS</span>
                   <button 
-                    onClick={() => { setClientType('Corporate'); smoothScroll('contact-form-section'); }} 
+                    onClick={() => { smoothScroll('contact-form-section'); }} 
                     className="text-xs font-mono font-semibold text-white tracking-wider flex items-center gap-1.5 hover:text-bright-purple transition-all group-hover:translate-x-1.5 cursor-pointer"
                   >
                     Inquire Corporate Demo <ArrowRight className="w-4 h-4 text-[#C084FC]" />
@@ -729,22 +688,22 @@ export default function App() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
             {/* Left Info Column */}
-            <div className="lg:col-span-5 space-y-6 text-left">
+            <div className="lg:col-span-12 space-y-6 text-center">
               <span className="text-bright-purple font-mono text-xs tracking-[0.2em] uppercase block">INQUIRY INTAKE PORTAL</span>
               <h2 className="text-2xl sm:text-3xl font-syne font-bold uppercase text-white tracking-normal leading-tight">
                 Let's Breathe Together
               </h2>
-              <div className="w-12 h-0.5 bg-primary-purple" />
-              <p className="text-gray-400 text-sm leading-relaxed font-light">
+              <div className="w-12 h-0.5 bg-primary-purple mx-auto" />
+              <p className="text-gray-400 text-sm leading-relaxed font-light max-w-2xl mx-auto">
                 Let’s build your custom wellness program. Whether you are a luxury resort manager, corporate lead, or looking for private 1-on-1 instruction, get in touch to design your session.
               </p>
               
               <p className="text-gray-400 text-sm leading-relaxed font-light">
-                Verify your details below. I review and correspond personally within 24 hours.
+                Get in touch personally. I review and correspond within 24 hours.
               </p>
 
               {/* Direct channels */}
-              <div className="space-y-3 pt-4 border-t border-white/5 font-mono text-xs text-gray-400">
+              <div className="space-y-3 pt-4 border-t border-white/5 font-mono text-xs text-gray-400 flex flex-col items-center">
                 <div className="flex items-center gap-3 text-white">
                   <Phone className="w-4 h-4 text-bright-purple" />
                   <span>+91 8319936577</span>
@@ -757,119 +716,15 @@ export default function App() {
                   <MapPin className="w-4 h-4 text-bright-purple" />
                   <span>Kondapur, Hyderabad — 500084</span>
                 </div>
-              </div>
-            </div>
-
-            {/* Right Form Column */}
-            <div className="lg:col-span-7">
-              <div className="border border-primary-purple/10 bg-[#120A20]/40 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden glow-purple">
-                
-                {formSubmitted ? (
-                  <div 
-                    className="text-center py-12 space-y-6"
-                  >
-                    <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/40 flex items-center justify-center text-emerald-400 mx-auto animate-bounce pb-0.5">
-                      <CheckCircle className="w-8 h-8 text-emerald-400" />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <h4 className="text-2xl font-display font-semibold text-white uppercase tracking-wider">Transmission Realised</h4>
-                      <p className="text-[#C084FC] text-xs font-mono tracking-widest uppercase">Pranayama Inquiry Stored</p>
-                    </div>
-
-                    <p className="text-gray-400 text-xs sm:text-xs leading-relaxed max-w-md mx-auto">
-                      Thank You for submitting the form. Amisha will reach out to you in 2 working days.
-                    </p>
-
-                    <button 
-                      onClick={() => setFormSubmitted(false)}
-                      className="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-xl text-xs font-mono uppercase tracking-widest transition-colors cursor-pointer"
-                    >
-                      Resubmit Custom Intake Form
-                    </button>
-                  </div>
-                ) : (
-                  <form onSubmit={handleContactSubmit} className="space-y-5">
-                    
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      
-                      <div className="space-y-1.5">
-                        <label className="text-[10px] font-mono uppercase tracking-wider text-gray-400 block font-semibold">Full Name</label>
-                        <input 
-                          type="text" 
-                          required
-                          value={fullName}
-                          onChange={(e) => setFullName(e.target.value)}
-                          placeholder="John Doe" 
-                          className="w-full bg-[#050309] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-primary-purple placeholder-gray-700 font-sans"
-                        />
-                      </div>
-
-                      <div className="space-y-1.5">
-                        <label className="text-[10px] font-mono uppercase tracking-wider text-gray-400 block font-semibold">Email Address</label>
-                        <input 
-                          type="email" 
-                          required
-                          value={emailAddress}
-                          onChange={(e) => setEmailAddress(e.target.value)}
-                          placeholder="shiva@veda.com" 
-                          className="w-full bg-[#050309] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-primary-purple placeholder-gray-700 font-sans"
-                        />
-                      </div>
-
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      
-                      <div className="space-y-1.5">
-                        <label className="text-[10px] font-mono uppercase tracking-wider text-gray-400 block font-semibold">Phone Number</label>
-                        <input 
-                          type="tel" 
-                          value={phoneNumber}
-                          onChange={(e) => setPhoneNumber(e.target.value)}
-                          placeholder="+91 99999 88888" 
-                          className="w-full bg-[#050309] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-primary-purple placeholder-gray-700 font-mono"
-                        />
-                      </div>
-
-                      <div className="space-y-1.5">
-                        <label className="text-[10px] font-mono uppercase tracking-wider text-gray-400 block font-semibold">Consultant Type</label>
-                        <select 
-                          value={clientType}
-                          onChange={(e) => setClientType(e.target.value)}
-                          className="w-full bg-[#050309] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-primary-purple font-mono cursor-pointer"
-                        >
-                          <option value="Individual">Individual Searcher</option>
-                          <option value="Hotel or Resort">Hotel or Resort GM</option>
-                          <option value="Corporate">Corporate HR Executive</option>
-                          <option value="Other">Other Engagement</option>
-                        </select>
-                      </div>
-
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-mono uppercase tracking-wider text-gray-400 block font-semibold">Message & Breath Objectives</label>
-                      <textarea 
-                        rows={3}
-                        required
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        placeholder="State your somatic challenges, corporate employee size, or resort venue goals here..." 
-                        className="w-full bg-[#050309] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-primary-purple placeholder-gray-700 resize-none font-sans"
-                      />
-                    </div>
-
-                    <button
-                      type="submit"
-                      className="w-full py-4 bg-gradient-to-r from-mid-purple to-primary-purple text-white font-mono font-bold tracking-widest text-xs uppercase rounded-xl transition-all glow-purple hover:scale-[1.01] active:scale-[0.99] cursor-pointer shadow-lg"
-                    >
-                      Send Message →
-                    </button>
-
-                  </form>
-                )}
-
+                <a 
+                  href="https://wa.me/917659983196" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 text-emerald-400 hover:text-emerald-300 mt-4 px-6 py-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl transition-colors"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  <span>Chat on WhatsApp</span>
+                </a>
               </div>
             </div>
 

@@ -3,7 +3,6 @@ import path from "path";
 import dotenv from "dotenv";
 import fs from "fs";
 import { GoogleGenAI, Type } from "@google/genai";
-import { google } from "googleapis";
 import { createServer as createViteServer } from "vite";
 import { HotelInfo, Inquiry, ProposalResult } from "./src/types.js";
 
@@ -266,32 +265,20 @@ app.post("/api/inquiries", async (req, res) => {
   };
 
   inquiries.unshift(newInquiry);
-  console.log("New inquiry created:", newInquiry);
+  console.log("New inquiry created:", newInquiry.id);
 
-  // Write to Google Sheet
-  try {
-    console.log("Attempting to write to Google Sheets for inquiry:", newInquiry.id);
-    const auth = new google.auth.GoogleAuth({
-      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-    });
-    const authClient = await auth.getClient();
-    const sheets = google.sheets({ version: 'v4', auth: authClient as any });
-    
-    await sheets.spreadsheets.values.append({
-      spreadsheetId: '17M5MR9sNUsdkgPYI0tRjE_aVSu4nbeEXb4UrFQSYrTw',
-      range: 'Sheet1!A:E',
-      valueInputOption: 'USER_ENTERED',
-      requestBody: {
-        values: [[newInquiry.createdAt, contactName, contactEmail, contactPhone, hotelInfo.hotelName]],
-      },
-    });
-    console.log("Successfully wrote to Google Sheets");
-  } catch (error) {
-    console.error("Error writing to Google Sheets:", error);
-    // Don't fail the request if sheet fails
-  }
+  // WhatsApp Message
+  const message = `New Inquiry:
+  Name: ${contactName}
+  Email: ${contactEmail}
+  Phone: ${contactPhone}
+  Info: ${hotelInfo.hotelName}`;
+  const encodedMessage = encodeURIComponent(message);
+  // Use a placeholder phone number; user can replace it.
+  const phoneNumber = "918290161427"; 
+  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
 
-  res.status(201).json(newInquiry);
+  res.status(201).json({ ...newInquiry, whatsappUrl });
 });
 
 // API: Upload custom hero background / portrait image
