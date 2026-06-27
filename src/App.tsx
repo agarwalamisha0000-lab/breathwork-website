@@ -245,11 +245,12 @@ export default function App() {
       });
       if (response.ok) {
         console.log("Form submitted successfully");
-        setFormSubmitted(true);
+      } else {
+        console.error("Form submission failed with status:", response.status);
       }
+      setFormSubmitted(true);
     } catch (error) {
       console.error("Failed submitting contact details:", error);
-      console.log("Setting formSubmitted to true after error");
       setFormSubmitted(true); // Fallback graceful notification
     }
   };

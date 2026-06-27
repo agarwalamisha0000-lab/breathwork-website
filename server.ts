@@ -266,9 +266,11 @@ app.post("/api/inquiries", async (req, res) => {
   };
 
   inquiries.unshift(newInquiry);
+  console.log("New inquiry created:", newInquiry);
 
   // Write to Google Sheet
   try {
+    console.log("Attempting to write to Google Sheets for inquiry:", newInquiry.id);
     const auth = new google.auth.GoogleAuth({
       scopes: ['https://www.googleapis.com/auth/spreadsheets'],
     });
@@ -283,6 +285,7 @@ app.post("/api/inquiries", async (req, res) => {
         values: [[newInquiry.createdAt, contactName, contactEmail, contactPhone, hotelInfo.hotelName]],
       },
     });
+    console.log("Successfully wrote to Google Sheets");
   } catch (error) {
     console.error("Error writing to Google Sheets:", error);
     // Don't fail the request if sheet fails
