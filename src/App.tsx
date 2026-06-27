@@ -244,11 +244,12 @@ export default function App() {
         body: JSON.stringify(leadPayload)
       });
       if (response.ok) {
+        console.log("Form submitted successfully");
         setFormSubmitted(true);
-        fetchInquiries(); // Refresh the administration ledger instantly!
       }
     } catch (error) {
       console.error("Failed submitting contact details:", error);
+      console.log("Setting formSubmitted to true after error");
       setFormSubmitted(true); // Fallback graceful notification
     }
   };
@@ -763,9 +764,7 @@ export default function App() {
               <div className="border border-primary-purple/10 bg-[#120A20]/40 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden glow-purple">
                 
                 {formSubmitted ? (
-                  <motion.div 
-                    initial={{ scale: 0.95, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
+                  <div 
                     className="text-center py-12 space-y-6"
                   >
                     <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/40 flex items-center justify-center text-emerald-400 mx-auto animate-bounce pb-0.5">
@@ -787,7 +786,7 @@ export default function App() {
                     >
                       Resubmit Custom Intake Form
                     </button>
-                  </motion.div>
+                  </div>
                 ) : (
                   <form onSubmit={handleContactSubmit} className="space-y-5">
                     
