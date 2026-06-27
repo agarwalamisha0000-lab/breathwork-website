@@ -3,6 +3,7 @@ import path from "path";
 import dotenv from "dotenv";
 import fs from "fs";
 import { GoogleGenAI, Type } from "@google/genai";
+import { google } from "googleapis";
 import { createServer as createViteServer } from "vite";
 import { HotelInfo, Inquiry, ProposalResult } from "./src/types.js";
 
@@ -265,6 +266,28 @@ app.post("/api/inquiries", async (req, res) => {
   };
 
   inquiries.unshift(newInquiry);
+
+  // Write to Google Sheet
+  try {
+    const auth = new google.auth.GoogleAuth({
+      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+    });
+    const authClient = await auth.getClient();
+    const sheets = google.sheets({ version: 'v4', auth: authClient as any });
+    
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: '17M5MR9sNUsdkgPYI0tRjE_aVSu4nbeEXb4UrFQSYrTw',
+      range: 'Sheet1!A:E',
+      valueInputOption: 'USER_ENTERED',
+      requestBody: {
+        values: [[newInquiry.createdAt, contactName, contactEmail, contactPhone, hotelInfo.hotelName]],
+      },
+    });
+  } catch (error) {
+    console.error("Error writing to Google Sheets:", error);
+    // Don't fail the request if sheet fails
+  }
+
   res.status(201).json(newInquiry);
 });
 
