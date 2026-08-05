@@ -384,14 +384,11 @@ export default function BreathingSimulator({ onBookCall }: BreathingSimulatorPro
 
       {/* Header Info */}
       <div className="text-center w-full z-10 max-w-xl mb-8">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-primary-purple/10 border border-primary-purple/30 rounded-full text-bright-purple text-xs font-mono tracking-widest uppercase mb-4">
-          <Sparkles className="w-3.5 h-3.5 animate-pulse" /> SAMA VRITTI PRANAYAMA
-        </span>
         <h3 className="text-3xl md:text-4xl font-display font-bold text-white mb-2 tracking-tight">
-          Vedic Box Breathing Coach
+          Equal Breathing
         </h3>
         <p className="text-gray-400 text-sm md:text-base">
-          Our nervous system is a musical instrument, and breath is the keys. Experience complete equilibrium in 4 cycles of ancient Ayurvedic breathing.
+          Our nervous system is a musical instrument, and breath is the keys.
         </p>
       </div>
 
@@ -492,9 +489,7 @@ export default function BreathingSimulator({ onBookCall }: BreathingSimulatorPro
             
             {/* Edge labels to represent Box steps clearly */}
             <span className={`absolute top-2.5 left-1/2 -translate-x-1/2 text-[9px] font-mono tracking-widest uppercase transition-all whitespace-nowrap ${phase === 'inhale' && isRunning ? 'text-amber-400 font-bold scale-105' : 'text-gray-500'}`}>1. Inhale (4s)</span>
-            <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[9px] font-mono tracking-widest uppercase transition-all whitespace-nowrap origin-center rotate-90 translate-x-[40%] ${phase === 'hold1' && isRunning ? 'text-amber-400 font-bold scale-105' : 'text-gray-500'}`}>2. Hold (4s)</span>
-            <span className={`absolute bottom-2.5 left-1/2 -translate-x-1/2 text-[9px] font-mono tracking-widest uppercase transition-all whitespace-nowrap ${phase === 'exhale' && isRunning ? 'text-amber-400 font-bold scale-105' : 'text-gray-500'}`}>3. Exhale (4s)</span>
-            <span className={`absolute left-2 top-1/2 -translate-y-1/2 text-[9px] font-mono tracking-widest uppercase transition-all whitespace-nowrap origin-center -rotate-90 -translate-x-[40%] ${phase === 'hold2' && isRunning ? 'text-amber-400 font-bold scale-105' : 'text-gray-500'}`}>4. Hold (4s)</span>
+            <span className={`absolute bottom-2.5 left-1/2 -translate-x-1/2 text-[9px] font-mono tracking-widest uppercase transition-all whitespace-nowrap ${phase === 'exhale' && isRunning ? 'text-amber-400 font-bold scale-105' : 'text-gray-500'}`}>2. Exhale (4s)</span>
           </div>
 
           {/* Glowing Golden Breathing Marker */}

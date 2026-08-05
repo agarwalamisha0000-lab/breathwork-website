@@ -19,6 +19,7 @@ import {
   Building,
   Shield,
   MessageCircle,
+  Calendar,
   Plane,
   Heart,
   Zap,
@@ -396,7 +397,7 @@ export default function App() {
               
               <div className="inline-flex flex-wrap items-center gap-2">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-primary-purple/10 border border-primary-purple/40 rounded-full text-bright-purple text-[10px] md:text-xs font-mono tracking-widest uppercase">
-                  <Sparkles className="w-3.5 h-3.5 text-bright-purple animate-pulse" /> TRANSCENDENTAL PRANAYAMA
+                  <Sparkles className="w-3.5 h-3.5 text-bright-purple animate-pulse" />
                 </span>
                 <span className="inline-flex items-center gap-1 px-3 py-1 bg-white/5 text-gray-400 border border-white/5 rounded-full text-[9px] md:text-xs font-mono uppercase tracking-wider">
                   8 Years Pranayama Practice
@@ -507,12 +508,12 @@ export default function App() {
                   </div>
                   
                   <div className="space-y-2">
-                    <span className="text-[#C084FC] text-xs font-mono uppercase tracking-widest">01 — ACCOMMODATION BRANDING</span>
-                    <h3 className="text-xl font-display font-medium text-white uppercase tracking-wider">Hotels & Wellness Resorts</h3>
+                    <span className="text-[#C084FC] text-xs font-mono uppercase tracking-widest">01 — PERSONALIZED RESPIRATION</span>
+                    <h3 className="text-xl font-display font-medium text-white uppercase tracking-wider">Individual Wellbeing</h3>
                   </div>
 
                   <p className="text-gray-300 text-sm leading-relaxed font-light">
-                    I design complete, bespoke Pranayama-based respiratory curriculums for boutique luxury resorts. From seasonal guest offerings to training spa and hosting teams, we establish a highly authentic wellness differentiator that drives guest loyalty and elevates property metrics.
+                    I design complete, bespoke Pranayama-based respiratory curriculums for individuals seeking deep transformation. These 1-on-1 sessions focus on personalized bio-feedback, resolving chronic stressors, and establishing a daily respiratory practice that balances your nervous system for long-term health.
                   </p>
                 </div>
 
@@ -706,11 +707,15 @@ export default function App() {
               <div className="space-y-3 pt-4 border-t border-white/5 font-mono text-xs text-gray-400 flex flex-col items-center">
                 <div className="flex items-center gap-3 text-white">
                   <Phone className="w-4 h-4 text-bright-purple" />
-                  <span>+91 8319936577</span>
+                  <span>+91 7659983196</span>
                 </div>
                 <div className="flex items-center gap-3 text-white">
                   <Mail className="w-4 h-4 text-bright-purple" />
-                  <span>amishaagarwal0000@gmail.com</span>
+                  <span>amishaagarwal138@gmail.com</span>
+                </div>
+                <div className="flex items-center gap-3 text-white">
+                  <Calendar className="w-4 h-4 text-bright-purple" />
+                  <a href="https://calendly.com/amishaagarwal138/30min" target="_blank" rel="noopener noreferrer" className="hover:text-bright-purple transition-colors">Book 30 min session</a>
                 </div>
                 <div className="flex items-center gap-3 text-white">
                   <MapPin className="w-4 h-4 text-bright-purple" />
@@ -764,9 +769,9 @@ export default function App() {
           <div className="md:col-span-4 space-y-3">
             <span className="text-[11px] font-mono text-gray-400 uppercase tracking-widest block font-bold">Contact Directories</span>
             <ul className="space-y-1.5 font-mono text-xs text-gray-500">
-              <li className="flex items-center gap-2"><Phone className="w-3.5 h-3.5 text-bright-purple" /> +91 8319936577</li>
-              <li className="flex items-center gap-2"><Mail className="w-3.5 h-3.5 text-bright-purple" /> amishaagarwal0000@gmail.com</li>
-              <li className="flex items-center gap-2"><MapPin className="w-3.5 h-3.5 text-bright-purple" /> Kondapur, Hyderabad, IN — 500084</li>
+              <li className="flex items-center gap-2"><Phone className="w-3.5 h-3.5 text-bright-purple" /> +91 7659983196</li>
+              <li className="flex items-center gap-2"><Mail className="w-3.5 h-3.5 text-bright-purple" /> amishaagarwal138@gmail.com</li>
+              <li className="flex items-center gap-2"><MapPin className="w-3.5 h-3.5 text-bright-purple" /> Hyderabad, IN</li>
             </ul>
           </div>
 
